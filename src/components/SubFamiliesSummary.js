@@ -182,11 +182,7 @@ class SubFamiliesSummary extends PagedDataHandler {
     "insuree.familySummaries.email",
     "insuree.familySummaries.phone",
     "insuree.familySummaries.dob",
-    // ...Array.from(Array(this.locationLevels)).map((_, i) => `location.locationType.${i}`),
-    // "insuree.familySummaries.poverty",
     "insuree.familySummaries.confirmationNo",
-    // "insuree.familySummaries.validityFrom",
-    // "insuree.familySummaries.validityTo",
   ];
 
   sorter = (attr, asc = true) => [
@@ -216,17 +212,6 @@ class SubFamiliesSummary extends PagedDataHandler {
     return !!loc ? loc.name : "";
   };
 
-  //   adornedChfId = (i) => (
-  //     <Fragment>
-  //       <IconButton
-  //         size="small"
-  //         onClick={(e) => !i.clientMutationId && this.setState({ enquiryOpen: true, chfid: i.chfId })}
-  //       >
-  //         <SearchIcon />
-  //       </IconButton>
-  //       {i.chfId}
-  //     </Fragment>
-  //   );
 
   confirmSetHeadInsuree = (i) => {
     let confirmedAction = () => {
