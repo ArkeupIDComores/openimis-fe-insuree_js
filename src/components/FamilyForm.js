@@ -19,7 +19,7 @@ import {
   Helmet,
 } from "@openimis/fe-core";
 import { fetchFamily, newFamily, createFamily, fetchFamilyMutation } from "../actions";
-import { INSUREE_ACTIVE_STRING, RIGHT_FAMILY } from "../constants";
+import { INSUREE_ACTIVE_STRING, RIGHT_FAMILY, FAMILY_TYPE_POLYGAMY_CODE } from "../constants";
 import { insureeLabel, isValidInsuree } from "../utils/utils";
 import HeadInsureeMasterPanel from "./HeadInsureeMasterPanel";
 import FamilyMasterPanel from "./FamilyMasterPanel";
@@ -222,7 +222,7 @@ class FamilyForm extends Component {
             openFamilyButton={openFamilyButton}
             overview={overview}
             HeadPanel={FamilyMasterPanel}
-            Panels={(overview && (!!family.familyType && family.familyType.code == 'P'))? [ HeadInsureeMasterPanel, SubFamiliesSummary] : overview &&(!!family.familyType && family.familyType.code !== 'P') ? [ FamilyInsureesOverview]  : [HeadInsureeMasterPanel]}
+            Panels={(overview && (!!family.familyType && family.familyType.code == FAMILY_TYPE_POLYGAMY_CODE))? [ HeadInsureeMasterPanel, SubFamiliesSummary] : overview &&(!!family.familyType && family.familyType.code !== FAMILY_TYPE_POLYGAMY_CODE) ? [ FamilyInsureesOverview]  : [HeadInsureeMasterPanel]}
             contributedPanelsKey={
               overview ? INSUREE_FAMILY_OVERVIEW_PANELS_CONTRIBUTION_KEY : INSUREE_FAMILY_PANELS_CONTRIBUTION_KEY
             }

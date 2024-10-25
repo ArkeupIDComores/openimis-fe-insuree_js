@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { INSUREE_ACTIVE_STRING, PASSPORT_LENGTH } from "../constants";
+import { INSUREE_ACTIVE_STRING, INSUREE_PREFERRED_PAYMENT_METHOD } from "../constants";
 
 export function insureeLabel(insuree) {
   if (!insuree) return "";
@@ -18,10 +18,12 @@ export const isValidInsuree = (insuree, modulesManager) => {
     "insureeForm.isInsureeFirstServicePointRequired",
     false,
   );
+  const isPhoneNumberMandatory = modulesManager.getConf("fe-insuree", "fields", "{}")
 
   const isInsureePhotoRequired = modulesManager.getConf("fe-insuree", "insureeForm.isInsureePhotoRequired", false);
 
   const isInsureeStatusRequired = modulesManager.getConf("fe-insuree", "insureeForm.isInsureeStatusRequired", false);
+  const passportLength = modulesManager.getConf("fe-insuree", "passportLength", 7);
   if (isInsureeFirstServicePointRequired && !insuree.healthFacility) return false;
   if (insuree.validityTo) return false;
   // if (!insuree.chfId) return false;
@@ -31,17 +33,17 @@ export const isValidInsuree = (insuree, modulesManager) => {
   if (!insuree.gender || !insuree.gender?.code) return false;
   if (!!insuree.photo && (!insuree.photo.date || !insuree.photo.officerId || !insuree.photo.photo)) return false;
   if (!insuree.incomeLevel) return false;
-  if (!insuree.family && !insuree.hasOwnProperty('isFamily') ){
+  if (!insuree.family && !insuree.hasOwnProperty('isFamily') && isPhoneNumberMandatory.phoneNoHead != "H"  ){
     if(!insuree.phone){
       return false
     }
   }
   if (
     !insuree.passport ||
-    (!!insuree.passport && (insuree.passport.length < PASSPORT_LENGTH || insuree.passport.length > PASSPORT_LENGTH))
+    (!!insuree.passport && (insuree.passport.length < passportLength || insuree.passport.length > passportLength))
   )
     return false;
-  if (!!insuree.preferredPaymentMethod && insuree.preferredPaymentMethod == "PB" && !insuree.bankCoordinates)
+  if (!!insuree.preferredPaymentMethod && insuree.preferredPaymentMethod == INSUREE_PREFERRED_PAYMENT_METHOD && !insuree.bankCoordinates)
     return false;
   if (!insuree.photo) return false;
   if (!insuree.profession) return false;

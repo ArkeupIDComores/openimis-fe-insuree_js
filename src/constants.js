@@ -24,7 +24,6 @@ export const RIGHT_INSUREE_ADD = 101102;
 export const RIGHT_INSUREE_EDIT = 101103;
 export const RIGHT_INSUREE_DELETE = 101104;
 export const RIGHT_INSUREE_ENQUIRE = 101105;
-export const PASSPORT_LENGTH = 7
 export const DEFAULT = {
   SHOW_INSUREE_PROFILE: false,
   SHOW_INSUREE_SUMMARY_ADDRESS: false,
@@ -32,5 +31,7 @@ export const DEFAULT = {
   RENDER_LAST_NAME_FIRST: true,
   GENERIC_VOUCHER_ENABLED: false,
 };
+export const FAMILY_TYPE_POLYGAMY_CODE = "P";
+export const INSUREE_PREFERRED_PAYMENT_METHOD = "PB"
 
 export const WITHOUT_STR = "without"

@@ -36,6 +36,7 @@ class FamilyMasterPanel extends FormPanel {
       "renderLastNameFirst",
       DEFAULT.RENDER_LAST_NAME_FIRST,
     );
+    this.fields = props.modulesManager.getConf("fe-insuree", "fields", "{}");
   }
 
   renderLastNameField = (edited, classes) => {
@@ -118,7 +119,16 @@ class FamilyMasterPanel extends FormPanel {
   };
 
   render() {
-    const { intl, classes, edited, openFamilyButton = false, readOnly, overview , subFamily, isActiveFilterFamilyType} = this.props;
+    const {
+      intl,
+      classes,
+      edited,
+      openFamilyButton = false,
+      readOnly,
+      overview,
+      subFamily,
+      isActiveFilterFamilyType,
+    } = this.props;
     return (
       <Fragment>
         <Grid container className={classes.tableTitle}>
@@ -161,40 +171,43 @@ class FamilyMasterPanel extends FormPanel {
             />
           </Grid>
           {!!overview && this.headSummary()}
-          {!!subFamily && (subFamily.issubFamily == true || !!subFamily.uuid ) ? (
-            null
-          ) : <Grid item xs={2} className={classes.item}>
-          <PublishedComponent
-            pubRef="insuree.FamilyTypePicker"
-            withNull={false}
-            readOnly={readOnly}
-            required={true}
-            nullLabel={formatMessage(intl, "insuree", "Family.FamilyType.null")}
-            value={!!edited && !!edited.familyType ? edited.familyType.code : null}
-            onChange={(v) => this.updateAttribute("familyType", { code: v })}
-            isActiveFilterFamilyType={!!isActiveFilterFamilyType && isActiveFilterFamilyType == true? true: false } 
-          />
-        </Grid>}
-
-          {/* <Grid item xs={2} className={classes.item}>
-            <PublishedComponent
-              pubRef="insuree.ConfirmationTypePicker"
-              withNull={false}
-              readOnly={readOnly}
-              value={edited?.confirmationType ?? null}
-              onChange={(v) => this.updateAttribute("confirmationType", v)}
-            />
-          </Grid>
-          <Grid item xs={3} className={classes.item}>
-            <TextInput
-              module="insuree"
-              label="Family.confirmationNo"
-              readOnly={readOnly}
-              value={!edited ? "" : edited.confirmationNo}
-              onChange={(v) => this.updateAttribute("confirmationNo", v)}
-              required={edited?.confirmationType?.isConfirmationNumberRequired ?? false}
-            />
-          </Grid> */}
+          {!!subFamily && (subFamily.issubFamily == true || !!subFamily.uuid) ? null : (
+            <Grid item xs={2} className={classes.item}>
+              <PublishedComponent
+                pubRef="insuree.FamilyTypePicker"
+                withNull={false}
+                readOnly={readOnly}
+                required={true}
+                nullLabel={formatMessage(intl, "insuree", "Family.FamilyType.null")}
+                value={!!edited && !!edited.familyType ? edited.familyType.code : null}
+                onChange={(v) => this.updateAttribute("familyType", { code: v })}
+                isActiveFilterFamilyType={!!isActiveFilterFamilyType && isActiveFilterFamilyType == true ? true : false}
+              />
+            </Grid>
+          )}
+          {this.fields.confirmationType !== "N" && (
+            <>
+              <Grid item xs={2} className={classes.item}>
+                <PublishedComponent
+                  pubRef="insuree.ConfirmationTypePicker"
+                  withNull={false}
+                  readOnly={readOnly}
+                  value={edited?.confirmationType ?? null}
+                  onChange={(v) => this.updateAttribute("confirmationType", v)}
+                />
+              </Grid>
+              <Grid item xs={3} className={classes.item}>
+                <TextInput
+                  module="insuree"
+                  label="Family.confirmationNo"
+                  readOnly={readOnly}
+                  value={!edited ? "" : edited.confirmationNo}
+                  onChange={(v) => this.updateAttribute("confirmationNo", v)}
+                  required={edited?.confirmationType?.isConfirmationNumberRequired ?? false}
+                />
+              </Grid>
+            </>
+          )}
           <Grid item xs={4} className={classes.item}>
             <TextInput
               module="insuree"
