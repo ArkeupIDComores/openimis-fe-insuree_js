@@ -262,7 +262,7 @@ class InsureeMasterPanel extends FormPanel {
                     />
                   </Grid>
                   {(!insuree || insuree == null || (!!insuree && insuree.head == true)) &&
-                  this.fields.phoneNoHead == "M" ? (
+                  this.fields.phoneNoHead !== "H" ? (
                     <Grid item xs={6} className={classes.item}>
                       <TextInput
                         module="insuree"
@@ -273,7 +273,7 @@ class InsureeMasterPanel extends FormPanel {
                         onChange={(v) => this.updateAttribute("phone", v)}
                       />
                     </Grid>
-                  ) : (
+                  ) : this.fields.phoneNoHead !== "H" ? (
                     <Grid item xs={6} className={classes.item}>
                       <TextInput
                         module="insuree"
@@ -284,7 +284,7 @@ class InsureeMasterPanel extends FormPanel {
                         onChange={(v) => this.updateAttribute("phone", v)}
                       />
                     </Grid>
-                  )}
+                  ) : null}
                   <Grid item xs={6} className={classes.item}>
                     <TextInput
                       module="insuree"
