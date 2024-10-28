@@ -45,21 +45,6 @@ class InsureeMasterPanel extends FormPanel {
     );
   }
 
-  state = {
-    age: "",
-  };
-
-  _updateAge = (dob) => {
-    var age;
-    var date = new Date(dob);
-    var month_diff = Date.now() - date.getTime();
-    var age_dt = new Date(month_diff);
-    var year = age_dt.getUTCFullYear();
-    age = Math.abs(year - 1970);
-
-    this.setState({ age: age });
-  };
-
   renderLastNameField = (edited, classes, readOnly) => {
     return (
       <Grid item xs={4} className={classes.item}>
@@ -100,17 +85,6 @@ class InsureeMasterPanel extends FormPanel {
       edited_id,
       isSubFamily,
     } = this.props;
-
-    var age;
-    if (!!edited) {
-      var date = new Date(edited.dob);
-      var month_diff = Date.now() - date.getTime();
-      var age_dt = new Date(month_diff);
-      var year = age_dt.getUTCFullYear();
-      age = Math.abs(year - 1970);
-    } else {
-      age = this.state.age;
-    }
 
     return (
       <Grid container>
@@ -202,7 +176,6 @@ class InsureeMasterPanel extends FormPanel {
                       maxDate={new Date()}
                       onChange={(v) => {
                         this.updateAttribute("dob", v);
-                        this._updateAge(v);
                       }}
                     />
                   </Grid>
@@ -221,11 +194,10 @@ class InsureeMasterPanel extends FormPanel {
                     <Grid item xs={3} className={classes.item}>
                       <PublishedComponent
                         pubRef="insuree.InsureeMaritalStatusPicker"
-                        value={!!edited && !!edited.marital ? edited.marital : ""}
+                        value={!!edited && !!edited.marital ? edited.marital : "N"}
                         module="insuree"
                         readOnly={readOnly}
                         withNull={true}
-                        nullLabel="InsureeMaritalStatus.null"
                         onChange={(v) => this.updateAttribute("marital", v)}
                       />
                     </Grid>

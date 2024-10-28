@@ -39,7 +39,7 @@ class FamiliesPage extends Component {
     open: false,
     family: null,
     selections: [],
-    shouldbeLocked: false,
+    shouldBeLocked: false,
     disabled: true,
     parentLinked:null,
   };
@@ -85,9 +85,9 @@ class FamiliesPage extends Component {
     if (module !== moduleName) this.props.clearCurrentPaginationPage();
   };
   linkFamilyToParent = (cancelPolicies) => {
-    const { selections, family, shouldbeLocked } = this.state;
+    const { selections, family, shouldBeLocked } = this.state;
     this.setState({
-      shouldbeLocked: true,
+      shouldBeLocked: true,
       parentLinked: null,
     }, (e)=>{
       const updatePromises = selections.map((selection) => {
@@ -181,7 +181,7 @@ class FamiliesPage extends Component {
               filterPaneContributionsKey={FAMILY_FILTERS_CONTRIBUTION_KEY}
               actionsContributionKey={FAMILY_ACTION_CONTRIBUTION_KEY}
               selectParent={true}
-              shouldbeLocked={this.state.shouldbeLocked}
+              shouldBeLocked={this.state.shouldBeLocked}
               canSelectMutiple={false}
             />
           </DialogContent>
