@@ -5,10 +5,12 @@ import { connect } from "react-redux";
 import { Contributions, PublishedComponent, formatMessage, withModulesManager } from "@openimis/fe-core";
 import { PersonAdd as AddExistingIcon } from "@material-ui/icons";
 import { fetchInsureeFull } from "../actions";
+import { FAMILY_TYPE_POLYGAMY_CODE } from "../constants";
 
 const INSUREE_HEAD_INSUREE_PANELS_CONTRIBUTION_KEY = "insuree.HeadInsuree.panels";
 
 class HeadInsureeMasterPanel extends Component {
+  
   onEditedChanged = (head) => {
     let edited = { ...this.props.edited };
     edited["headInsuree"] = head;
@@ -20,9 +22,8 @@ class HeadInsureeMasterPanel extends Component {
 
   render() {
     const { intl, edited } = this.props;
-
     let actions = [
-      !!edited && !!edited.familyType && edited.familyType.code == "P"
+      !!edited && !!edited.familyType && edited.familyType.code == FAMILY_TYPE_POLYGAMY_CODE
         ? []
         : {
             button: (
@@ -49,7 +50,6 @@ class HeadInsureeMasterPanel extends Component {
           title="insuree.HeadInsureeMasterPanel.title"
           actions={actions}
         />
-
         <Contributions
           {...this.props}
           updateAttribute={this.updateAttribute}

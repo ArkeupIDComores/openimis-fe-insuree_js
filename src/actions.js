@@ -408,6 +408,7 @@ export function formatFamilyGQL(mm, family) {
     ${!!family.location ? `locationId: ${decodeId(family.location.id)}` : ""}
     poverty: ${!!family.poverty}
     ${!!family.familyType && !!family.familyType.code ? `familyTypeId: "${family.familyType.code}"` : ""}
+    ${!!family.address ? `address: "${formatGQLString(family.address)}"` : ""}
     ${
       !!family.confirmationType && !!family.confirmationType.code
         ? `confirmationTypeId: "${family.confirmationType.code}"`

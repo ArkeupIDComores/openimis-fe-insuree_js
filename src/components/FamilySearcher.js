@@ -240,7 +240,7 @@ class FamilySearcher extends Component {
   };
 
   rowDisabled = (selection, i) => !!i.validityTo;
-  rowLocked = (selection, i) => !!i.clientMutationId ;
+  rowLocked = (selection, i) => !!i.clientMutationId;
 
   render() {
     const {
