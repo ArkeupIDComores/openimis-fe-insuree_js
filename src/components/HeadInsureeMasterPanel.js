@@ -10,7 +10,7 @@ import { FAMILY_TYPE_POLYGAMY_CODE } from "../constants";
 const INSUREE_HEAD_INSUREE_PANELS_CONTRIBUTION_KEY = "insuree.HeadInsuree.panels";
 
 class HeadInsureeMasterPanel extends Component {
-  
+
   onEditedChanged = (head) => {
     let edited = { ...this.props.edited };
     edited["headInsuree"] = head;

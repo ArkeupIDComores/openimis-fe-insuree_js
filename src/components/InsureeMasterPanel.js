@@ -20,7 +20,7 @@ const styles = (theme) => ({
     height: "100%",
   },
 });
-import { DEFAULT, INSUREE_PREFERRED_PAYMENT_METHOD } from "../constants";
+import { DEFAULT, FAMILY_TYPE_POLYGAMY_CODE, INSUREE_PREFERRED_PAYMENT_METHOD } from "../constants";
 
 const INSUREE_INSUREE_CONTRIBUTION_KEY = "insuree.Insuree";
 const INSUREE_INSUREE_PANELS_CONTRIBUTION_KEY = "insuree.Insuree.panels";
@@ -141,17 +141,6 @@ class InsureeMasterPanel extends FormPanel {
                   />
                 </Grid>
               )}
-              {/* <Grid item xs={4} className={classes.item}>
-                <TextInput
-                  module="insuree"
-                  label="Insuree.lastName"
-                  required={true}
-                  readOnly={readOnly}
-                  value={edited?.chfId}
-                  edited_id={edited_id}
-                  onChange={(v) => this.updateAttribute("chfId", v)}
-                />
-              </Grid> */}
               {this.renderLastNameFirst ? (
                 <>
                   {this.renderLastNameField(edited, classes, readOnly)}
@@ -174,9 +163,7 @@ class InsureeMasterPanel extends FormPanel {
                       readOnly={readOnly}
                       required={true}
                       maxDate={new Date()}
-                      onChange={(v) => {
-                        this.updateAttribute("dob", v);
-                      }}
+                      onChange={(v) => this.updateAttribute("dob", v)}
                     />
                   </Grid>
                   <Grid item xs={3} className={classes.item}>
@@ -202,7 +189,7 @@ class InsureeMasterPanel extends FormPanel {
                       />
                     </Grid>
                   )}
-                  {edited?.marital == "P" ? (
+                  {edited?.marital == FAMILY_TYPE_POLYGAMY_CODE ? (
                     <Grid item xs={3} className={classes.item}>
                       <TextInput
                         module="insuree"
@@ -297,7 +284,6 @@ class InsureeMasterPanel extends FormPanel {
                       onChange={(v) => this.updateAttribute("typeOfId", { code: v })}
                     />
                   </Grid>
-
                   <Grid item xs={3} className={classes.item}>
                     <TextInput
                       module="insuree"

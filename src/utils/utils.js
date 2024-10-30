@@ -23,6 +23,7 @@ export const isValidInsuree = (insuree, modulesManager) => {
 
   const isInsureeStatusRequired = modulesManager.getConf("fe-insuree", "insureeForm.isInsureeStatusRequired", false);
   const passportLength = modulesManager.getConf("fe-insuree", "passportLength", 7);
+  const insureeChildId = modulesManager.getConf("fe-insuree", "insureeForm.insureeChildId", 4);
   if (isInsureeFirstServicePointRequired && !insuree.healthFacility) return false;
   if (insuree.validityTo) return false;
   // if (!insuree.chfId) return false;
@@ -45,7 +46,7 @@ export const isValidInsuree = (insuree, modulesManager) => {
   if (isInsureePhotoRequired && !insuree.photo) return false;
   if (
     !!insuree.relationship &&
-    insuree.relationship.id == 4 &&
+    insuree.relationship.id == insureeChildId &&
     (!insuree.education || (!!insuree.education && insuree.education.id == null))
   )
     return false;
