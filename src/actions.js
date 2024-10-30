@@ -23,7 +23,7 @@ const FAMILY_HEAD_PROJECTION = (mm) => [
   "age",
   "validityFrom",
   "validityTo",
-  `photo{id,uuid,date,folder,filename,officerId,photo}`, 
+  `photo{id,uuid,date,folder,filename,officerId,photo}`,
   "gender{code, gender}",
   "education{id}",
   "profession{id}",
@@ -396,7 +396,6 @@ export function formatInsureeGQL(mm, insuree) {
     ${!!insuree.coordinates ? `coordinates: "${insuree.coordinates}"` : ""}
     ${!!insuree.bankCoordinates ? `bankCoordinates: "${formatGQLString(insuree.bankCoordinates)}"` : ""}
     ${!!insuree.incomeLevel ? `incomeLevelId: ${decodeId(insuree.incomeLevel.id)}` : ""}
-
   `;
 }
 
@@ -409,7 +408,12 @@ export function formatFamilyGQL(mm, family) {
     ${!!family.location ? `locationId: ${decodeId(family.location.id)}` : ""}
     poverty: ${!!family.poverty}
     ${!!family.familyType && !!family.familyType.code ? `familyTypeId: "${family.familyType.code}"` : ""}
-    confirmationNo: ""
+    ${
+      !!family.confirmationType && !!family.confirmationType.code
+        ? `confirmationTypeId: "${family.confirmationType.code}"`
+        : ""
+    }
+    ${!!family.confirmationNo ? `confirmationNo: "${formatGQLString(family.confirmationNo)}"` : ""}
     ${!!family.address ? `address: "${formatGQLString(family.address)}"` : ""}
     ${!!family.jsonExt ? `jsonExt: ${formatJsonField(family.jsonExt)}` : ""}
     ${!!family.contribution ? `contribution: ${formatJsonField(family.contribution)}` : ""}
@@ -443,7 +447,6 @@ export function createFamily(mm, family, clientMutationLabel) {
 }
 
 export function updateFamily(mm, family, clientMutationLabel) {
-  let formated = formatFamilyGQL( mm ,family)
   let mutation = formatMutation("updateFamily", formatFamilyGQL(mm, family), clientMutationLabel);
   var requestedDateTime = new Date();
   return graphql(mutation.payload, ["INSUREE_MUTATION_REQ", "INSUREE_UPDATE_FAMILY_RESP", "INSUREE_MUTATION_ERR"], {
