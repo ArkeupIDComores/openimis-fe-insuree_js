@@ -19,14 +19,14 @@ const FAMILY_HEAD_PROJECTION = (mm) => [
   "lastName",
   "marital",
   "otherNames",
-  "email",
-  "phone",
   "dob",
-  "gender{code}",
+  "photo{id,uuid,date,folder,filename,officerId,photo}", 
+  "gender{code, gender}",
   "education{id}",
   "profession{id}",
   "marital",
   "cardIssued",
+  "currentVillage" + mm.getProjection("location.Location.FlatProjection"),
   "currentAddress",
   "typeOfId{code}",
   "passport",
@@ -36,9 +36,9 @@ const FAMILY_HEAD_PROJECTION = (mm) => [
   "statusDate",
   "statusReason{code,insureeStatusReason}",
   "email",
-  "phone", 
+  "phone",
+  "healthFacility" + mm.getProjection("location.HealthFacilityPicker.projection"),
   "incomeLevel{id, frenchVersion, englishVersion}",
-  "photo{id,uuid,date,folder,filename,officerId,photo}", 
   "preferredPaymentMethod", 
   "bankCoordinates", 
   "coordinates",
@@ -52,7 +52,6 @@ const FAMILY_FULL_PROJECTION = (mm) => [
   "confirmationType{code, isConfirmationNumberRequired}",
   "familyType{code}",
   "address",
-  "parent{id}",
   "validityFrom",
   "validityTo",
   `headInsuree{${FAMILY_HEAD_PROJECTION(mm).join(",")}}`,
@@ -175,7 +174,6 @@ export function fetchFamilySummaries(mm, filters) {
     `headInsuree{${FAMILY_HEAD_PROJECTION(mm).join(",")}}`,
     "location" + mm.getProjection("location.Location.FlatProjection"),
     "clientMutationId",
-    "parent{id}",
   ];
   const payload = formatPageQueryWithCount("families", filters, projections);
   return graphql(payload, "INSUREE_FAMILIES");
@@ -354,7 +352,7 @@ function formatInsureePhoto(photo) {
 export function formatInsureeGQL(mm, insuree) {
   return `
     ${insuree.uuid !== undefined && insuree.uuid !== null ? `uuid: "${insuree.uuid}"` : ""}
-    ${!!insuree.chfId ? `chfId: "${formatGQLString(insuree.chfId)}"`: ''}
+    ${!!insuree.chfId ? `chfId: "${formatGQLString(insuree.chfId)}"` : ""}
     ${!!insuree.lastName ? `lastName: "${formatGQLString(insuree.lastName)}"` : ""}
     ${!!insuree.otherNames ? `otherNames: "${formatGQLString(insuree.otherNames)}"` : ""}
     ${!!insuree.gender && !!insuree.gender.code ? `genderId: "${insuree.gender.code}"` : ""}
@@ -388,7 +386,7 @@ export function formatInsureeGQL(mm, insuree) {
       !!insuree.healthFacility && !!insuree.healthFacility.id
         ? `healthFacilityId: ${decodeId(insuree.healthFacility.id)}`
         : ""
-    } 
+    }
     ${!!insuree.jsonExt ? `jsonExt: ${formatJsonField(insuree.jsonExt)}` : ""}
     ${!!insuree.preferredPaymentMethod ? `preferredPaymentMethod: "${insuree.preferredPaymentMethod}"` : ""}
     ${!!insuree.professionalSituation ? `professionalSituation: "${insuree.professionalSituation}"` : ""}
