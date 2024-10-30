@@ -43,6 +43,11 @@ class InsureeMasterPanel extends FormPanel {
       "passportLength",
       7,
     );
+    this.insureeChildId = props.modulesManager.getConf(
+      "fe-insuree", 
+      "insureeForm.insureeChildId", 
+      4
+    );
   }
 
   renderLastNameField = (edited, classes, readOnly) => {
@@ -261,13 +266,13 @@ class InsureeMasterPanel extends FormPanel {
                       onChange={(v) => this.updateAttribute("profession", { id: v })}
                     />
                   </Grid>
-                  {!!edited && !!edited.relationship && edited.relationship.id == 4 && (
+                  {!!edited && !!edited.relationship && edited.relationship.id == this.insureeChildId && (
                     <Grid item xs={3} className={classes.item}>
                       <PublishedComponent
                         pubRef="insuree.EducationPicker"
                         module="insuree"
                         value={!!edited && !!edited.education ? edited.education.id : ""}
-                        required={!!edited && !!edited.relationship && edited.relationship.id == 4 ? true : false}
+                        required={!!edited && !!edited.relationship && edited.relationship.id == this.insureeChildId ? true : false}
                         readOnly={readOnly}
                         withNull={false}
                         onChange={(v) => this.updateAttribute("education", { id: v })}

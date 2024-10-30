@@ -79,7 +79,6 @@ class FamiliesPage extends Component {
   onAdd = () => {
     historyPush(this.props.modulesManager, this.props.history, "insuree.route.family");
   };
-  
   componentDidMount = () => {
     const moduleName = "insuree";
     const { module } = this.props;

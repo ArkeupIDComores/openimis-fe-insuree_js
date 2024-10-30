@@ -50,7 +50,6 @@ export const isValidInsuree = (insuree, modulesManager) => {
     (!insuree.education || (!!insuree.education && insuree.education.id == null))
   )
     return false;
-  //cas de modificationn de l'assuré qui n'est pas le parent 
   if (!!insuree.family && !!insuree.family.headInsuree && !!insuree.family.headInsuree.id ){
     if(insuree.family.headInsuree.id !== insuree.id && (!insuree.relationship ||  (!!insuree.relationship && (insuree.relationship.id ==null) ))) return false
   } 
