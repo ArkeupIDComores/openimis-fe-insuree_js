@@ -41,7 +41,7 @@ const FAMILY_HEAD_PROJECTION = (mm) => [
   "email",
   "phone",
   "healthFacility" + mm.getProjection("location.HealthFacilityPicker.projection"),
-  "incomeLevel{id, frenchVersion, englishVersion}",
+  "incomeLevel{id, firstLanguage, secondLanguage}",
   "preferredPaymentMethod", 
   "bankCoordinates", 
   "coordinates",
@@ -78,7 +78,7 @@ const INSUREE_FULL_PROJECTION = (mm) => [
   "professionalSituation",
   "bankCoordinates",
   "coordinates",
-  "incomeLevel{id, frenchVersion, englishVersion}",
+  "incomeLevel{id, firstLanguage, secondLanguage}",
   "preferredPaymentMethod",
   `family{${FAMILY_FULL_PROJECTION(mm).join(",")}}`,
   `photo{id,uuid,date,folder,filename,officerId,photo}`,
@@ -237,7 +237,7 @@ export function fetchFamilyTypes() {
 }
 
 export function fetchIncomeLevels() {
-  const payload = formatQuery("incomeLevels", null, ["id", "frenchVersion", "englishVersion"]);
+  const payload = formatQuery("incomeLevels", null, ["id", "firstLanguage", "secondLanguage"]);
   return graphql(payload, "INSUREE_FAMILY_INCOME_LEVEL");
 }
 
