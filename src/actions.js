@@ -329,7 +329,7 @@ export function fetchInsureeSummaries(mm, filters, ignoreLocation = false) {
     "professionalSituation",
     "bankCoordinates",
     "coordinates",
-    "incomeLevel{id, frenchVersion, englishVersion}",
+    "incomeLevel{id, firstLanguage, secondLanguage}",
     "preferredPaymentMethod",
     "marital",
     "status",
