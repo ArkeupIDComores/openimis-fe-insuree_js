@@ -21,7 +21,7 @@ import FamilySearcher from "../components/FamilySearcher";
 import LinkFamilyToParentDialog from "../components/LinkFamilyToParentDialog";
 
 import { linkFamily, fetchSubFamilySummary } from "../actions";
-import { RIGHT_FAMILY_ADD } from "../constants";
+import { FAMILY_TYPE_POLYGAMY_CODE, RIGHT_FAMILY_ADD } from "../constants";
 import { familyLabel } from "../utils/utils";
 
 const styles = (theme) => ({
@@ -49,7 +49,7 @@ class FamiliesPage extends Component {
 
   OnFamilySelect = (f) => {
     const { selections } = this.state;
-    if (!!f.familyType && f.familyType?.code != "P") {
+    if (!!f.familyType && f.familyType?.code != FAMILY_TYPE_POLYGAMY_CODE) {
       this.setState({
         disabled: true,
       });
@@ -128,7 +128,7 @@ class FamiliesPage extends Component {
     if (selection && selection.length) {
       return selection.every((selected) => {
         const familyTypeCode = selected.familyType?.code;
-        return familyTypeCode !== "P" && selected.parent == null;
+        return familyTypeCode !== FAMILY_TYPE_POLYGAMY_CODE && selected.parent == null;
       });
     }
     return false;
