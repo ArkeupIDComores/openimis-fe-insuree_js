@@ -39,11 +39,7 @@ class InsureeMasterPanel extends FormPanel {
       DEFAULT.RENDER_LAST_NAME_FIRST,
     );
     this.fields = props.modulesManager.getConf("fe-insuree", "fields", "{}");
-    this.passportLength = props.modulesManager.getConf(
-      "fe-insuree",
-      "passportLength",
-      7,
-    );
+    this.passportLength = props.modulesManager.getConf("fe-insuree", "passportLength", 7);
   }
 
   state = {
@@ -102,6 +98,7 @@ class InsureeMasterPanel extends FormPanel {
       isSubFamily,
       insuree,
     } = this.props;
+
 
     var age;
     if (!!edited) {
@@ -266,30 +263,23 @@ class InsureeMasterPanel extends FormPanel {
                       onChangeAddress={(v) => this.updateAttribute("currentAddress", v)}
                     />
                   </Grid>
-                  {(!insuree || insuree == null || (!!insuree && insuree.head == true)) &&
-                  this.fields.phoneNoHead !== "H" ? (
-                    <Grid item xs={6} className={classes.item}>
-                      <TextInput
-                        module="insuree"
-                        label="Insuree.phone"
-                        readOnly={readOnly}
-                        required={this.fields.phoneNoHead == "M"}
-                        value={!!edited && !!edited.phone ? edited.phone : ""}
-                        onChange={(v) => this.updateAttribute("phone", v)}
-                      />
-                    </Grid>
-                  ) : this.fields.phoneNoHead !== "H" ? (
-                    <Grid item xs={6} className={classes.item}>
-                      <TextInput
-                        module="insuree"
-                        label="Insuree.phone"
-                        readOnly={readOnly}
-                        required={false}
-                        value={!!edited && !!edited.phone ? edited.phone : ""}
-                        onChange={(v) => this.updateAttribute("phone", v)}
-                      />
-                    </Grid>
-                  ) : null}
+
+                  <Grid item xs={6} className={classes.item}>
+                    <TextInput
+                      module="insuree"
+                      label="Insuree.phone"
+                      readOnly={readOnly}
+                      required={
+                        (!insuree || insuree == null || (!!insuree && insuree.head == true)) &&
+                        this.fields.phoneNoHead == "M"
+                          ? true
+                          : false
+                      }
+                      value={!!edited && !!edited.phone ? edited.phone : ""}
+                      onChange={(v) => this.updateAttribute("phone", v)}
+                    />
+                  </Grid>
+
                   <Grid item xs={6} className={classes.item}>
                     <TextInput
                       module="insuree"
