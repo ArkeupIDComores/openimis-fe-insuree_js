@@ -16,7 +16,7 @@ import {
 import { fetchFamilySummaries, deleteFamily } from "../actions";
 import { Delete as DeleteIcon } from "@material-ui/icons";
 import FamilyFilter from "./FamilyFilter";
-import { DEFAULT, RIGHT_FAMILY_DELETE } from "../constants";
+import { DEFAULT, FAMILY_TYPE_POLYGAMY_CODE, RIGHT_FAMILY_DELETE } from "../constants";
 import { familyLabel } from "../utils/utils";
 import DeleteFamilyDialog from "./DeleteFamilyDialog";
 import { withTheme, withStyles } from "@material-ui/core/styles";
@@ -85,7 +85,7 @@ class FamilySearcher extends Component {
       prms.push(`orderBy: ["${state.orderBy}"]`);
     }
     if(!!state.canSelectParent && state.canSelectParent == true){
-      prms.push(`familyType : "P"`)
+      prms.push(`familyType : ${FAMILY_TYPE_POLYGAMY_CODE}`)
     }
     return prms;
   };
