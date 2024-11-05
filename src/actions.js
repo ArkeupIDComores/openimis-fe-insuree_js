@@ -12,9 +12,41 @@ import {
 import { INSUREE_ACTIVE_STRING } from "./constants";
 
 //NOTE: Fetching all INSUREE_FULL_PROJECTION fields except family.
-const FAMILY_HEAD_PROJECTION =
-  "headInsuree{id,uuid,chfId,lastName,marital,otherNames,email,phone,dob,gender{code},education{id},profession{id},marital,cardIssued,currentAddress,typeOfId{code},passport,relationship{id},head,status,statusDate,statusReason{code,insureeStatusReason},email,phone, incomeLevel{id, frenchVersion, englishVersion},photo{id,uuid,date,folder,filename,officerId,photo}, preferredPaymentMethod, bankCoordinates, coordinates,professionalSituation}";
-
+const FAMILY_HEAD_PROJECTION = (mm) => [
+  "id",
+  "uuid",
+  "chfId",
+  "lastName",
+  "marital",
+  "otherNames",
+  "dob",
+  "age",
+  "validityFrom",
+  "validityTo",
+  `photo{id,uuid,date,folder,filename,officerId,photo}`,
+  "gender{code, gender}",
+  "education{id}",
+  "profession{id}",
+  "marital",
+  "cardIssued",
+  "currentVillage" + mm.getProjection("location.Location.FlatProjection"),
+  "currentAddress",
+  "typeOfId{code}",
+  "passport",
+  "relationship{id}",
+  "head",
+  "status",
+  "statusDate",
+  "statusReason{code,insureeStatusReason}",
+  "email",
+  "phone",
+  "healthFacility" + mm.getProjection("location.HealthFacilityPicker.projection"),
+  "incomeLevel{id, firstLanguage, secondLanguage}",
+  "preferredPaymentMethod", 
+  "bankCoordinates", 
+  "coordinates",
+  "professionalSituation"
+];
 const FAMILY_FULL_PROJECTION = (mm) => [
   "id",
   "uuid",
@@ -23,10 +55,9 @@ const FAMILY_FULL_PROJECTION = (mm) => [
   "confirmationType{code, isConfirmationNumberRequired}",
   "familyType{code}",
   "address",
-  "parent{id}",
   "validityFrom",
   "validityTo",
-  FAMILY_HEAD_PROJECTION,
+  `headInsuree{${FAMILY_HEAD_PROJECTION(mm).join(",")}}`,
   "location" + mm.getProjection("location.Location.FlatProjection"),
   "clientMutationId",
   "parent{id}",
@@ -47,7 +78,7 @@ const INSUREE_FULL_PROJECTION = (mm) => [
   "professionalSituation",
   "bankCoordinates",
   "coordinates",
-  "incomeLevel{id, frenchVersion, englishVersion}",
+  "incomeLevel{id, firstLanguage, secondLanguage}",
   "preferredPaymentMethod",
   `family{${FAMILY_FULL_PROJECTION(mm).join(",")}}`,
   `photo{id,uuid,date,folder,filename,officerId,photo}`,
@@ -143,10 +174,9 @@ export function fetchFamilySummaries(mm, filters) {
     "parent{id}",
     "validityFrom",
     "validityTo",
-    FAMILY_HEAD_PROJECTION,
+    `headInsuree{${FAMILY_HEAD_PROJECTION(mm).join(",")}}`,
     "location" + mm.getProjection("location.Location.FlatProjection"),
     "clientMutationId",
-    "parent{id}",
   ];
   const payload = formatPageQueryWithCount("families", filters, projections);
   return graphql(payload, "INSUREE_FAMILIES");
@@ -169,7 +199,7 @@ export function fetchSubFamilySummary(mm, filters) {
     "parent{id}",
     "validityFrom",
     "validityTo",
-    FAMILY_HEAD_PROJECTION,
+    `headInsuree{${FAMILY_HEAD_PROJECTION(mm).join(",")}}`,
     "location" + mm.getProjection("location.Location.FlatProjection"),
     "clientMutationId",
   ];
@@ -207,7 +237,7 @@ export function fetchFamilyTypes() {
 }
 
 export function fetchIncomeLevels() {
-  const payload = formatQuery("incomeLevels", null, ["id", "frenchVersion", "englishVersion"]);
+  const payload = formatQuery("incomeLevels", null, ["id", "firstLanguage", "secondLanguage"]);
   return graphql(payload, "INSUREE_FAMILY_INCOME_LEVEL");
 }
 
@@ -299,7 +329,7 @@ export function fetchInsureeSummaries(mm, filters, ignoreLocation = false) {
     "professionalSituation",
     "bankCoordinates",
     "coordinates",
-    "incomeLevel{id, frenchVersion, englishVersion}",
+    "incomeLevel{id, firstLanguage, secondLanguage}",
     "preferredPaymentMethod",
     "marital",
     "status",
@@ -325,7 +355,7 @@ function formatInsureePhoto(photo) {
 export function formatInsureeGQL(mm, insuree) {
   return `
     ${insuree.uuid !== undefined && insuree.uuid !== null ? `uuid: "${insuree.uuid}"` : ""}
-    ${!!insuree.chfId ? `chfId: "${formatGQLString(insuree.chfId)}"`: ''}
+    ${!!insuree.chfId ? `chfId: "${formatGQLString(insuree.chfId)}"` : ""}
     ${!!insuree.lastName ? `lastName: "${formatGQLString(insuree.lastName)}"` : ""}
     ${!!insuree.otherNames ? `otherNames: "${formatGQLString(insuree.otherNames)}"` : ""}
     ${!!insuree.gender && !!insuree.gender.code ? `genderId: "${insuree.gender.code}"` : ""}
@@ -359,14 +389,13 @@ export function formatInsureeGQL(mm, insuree) {
       !!insuree.healthFacility && !!insuree.healthFacility.id
         ? `healthFacilityId: ${decodeId(insuree.healthFacility.id)}`
         : ""
-    } 
+    }
     ${!!insuree.jsonExt ? `jsonExt: ${formatJsonField(insuree.jsonExt)}` : ""}
     ${!!insuree.preferredPaymentMethod ? `preferredPaymentMethod: "${insuree.preferredPaymentMethod}"` : ""}
     ${!!insuree.professionalSituation ? `professionalSituation: "${insuree.professionalSituation}"` : ""}
     ${!!insuree.coordinates ? `coordinates: "${insuree.coordinates}"` : ""}
     ${!!insuree.bankCoordinates ? `bankCoordinates: "${formatGQLString(insuree.bankCoordinates)}"` : ""}
     ${!!insuree.incomeLevel ? `incomeLevelId: ${decodeId(insuree.incomeLevel.id)}` : ""}
-
   `;
 }
 
@@ -379,7 +408,13 @@ export function formatFamilyGQL(mm, family) {
     ${!!family.location ? `locationId: ${decodeId(family.location.id)}` : ""}
     poverty: ${!!family.poverty}
     ${!!family.familyType && !!family.familyType.code ? `familyTypeId: "${family.familyType.code}"` : ""}
-    confirmationNo: ""
+    ${!!family.address ? `address: "${formatGQLString(family.address)}"` : ""}
+    ${
+      !!family.confirmationType && !!family.confirmationType.code
+        ? `confirmationTypeId: "${family.confirmationType.code}"`
+        : ""
+    }
+    ${!!family.confirmationNo ? `confirmationNo: "${formatGQLString(family.confirmationNo)}"` : ""}
     ${!!family.address ? `address: "${formatGQLString(family.address)}"` : ""}
     ${!!family.jsonExt ? `jsonExt: ${formatJsonField(family.jsonExt)}` : ""}
     ${!!family.contribution ? `contribution: ${formatJsonField(family.contribution)}` : ""}
@@ -413,7 +448,6 @@ export function createFamily(mm, family, clientMutationLabel) {
 }
 
 export function updateFamily(mm, family, clientMutationLabel) {
-  let formated = formatFamilyGQL( mm ,family)
   let mutation = formatMutation("updateFamily", formatFamilyGQL(mm, family), clientMutationLabel);
   var requestedDateTime = new Date();
   return graphql(mutation.payload, ["INSUREE_MUTATION_REQ", "INSUREE_UPDATE_FAMILY_RESP", "INSUREE_MUTATION_ERR"], {

@@ -54,7 +54,6 @@ const InsureeSummary = (props) => {
     "renderLastNameFirst",
     DEFAULT.RENDER_LAST_NAME_FIRST,
   );
-  
 
   return (
     <Grid container className={className}>

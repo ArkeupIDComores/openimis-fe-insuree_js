@@ -6,6 +6,7 @@ import { formatMessage, SelectInput, withModulesManager } from "@openimis/fe-cor
 import { fetchFamilyTypes } from "../actions";
 import _debounce from "lodash/debounce";
 import _ from "lodash";
+import { FAMILY_TYPE_POLYGAMY_CODE } from "../constants";
 
 class FamilyTypePicker extends Component {
   componentDidMount() {
@@ -48,7 +49,7 @@ class FamilyTypePicker extends Component {
     ? (isActiveFilterFamilyType == false 
         ? familyTypes.map((v) => ({ value: v, label: this.formatSuggestion(v) })) 
         : familyTypes
-            .filter((v) => v !== "P")
+            .filter((v) => v !== FAMILY_TYPE_POLYGAMY_CODE)
             .map((v) => ({ value: v, label: this.formatSuggestion(v) }))
       )
     : [];

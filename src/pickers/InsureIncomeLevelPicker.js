@@ -21,7 +21,7 @@ class InvoiceLevelsPicker extends Component {
   formatSuggestion = (i) =>
     !!i ? `${formatMessage(this.props.intl, "insuree", i)}` : this.nullDisplay;
 
-  onSuggestionSelected = (v) => this.props.onChange(v, this.formatSuggestion(v.frenchVersion));
+  onSuggestionSelected = (v) => this.props.onChange(v, this.formatSuggestion(v.firstLanguage));
 
   render() {
     const {
@@ -41,7 +41,7 @@ class InvoiceLevelsPicker extends Component {
     } = this.props;
  
     let options = !!incomeLevels
-      ? incomeLevels.map((v) => ({ value: v, label: language == 'fr' ? this.formatSuggestion(v.frenchVersion) :  this.formatSuggestion(v.englishVersion)}))
+      ? incomeLevels.map((v) => ({ value: v, label: language == 'en' ? this.formatSuggestion(v.firstLanguage) :  this.formatSuggestion(v.secondLanguage)}))
       : [];
   
     if (withNull) {
