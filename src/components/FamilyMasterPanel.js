@@ -127,6 +127,7 @@ class FamilyMasterPanel extends FormPanel {
       readOnly,
       overview,
       subFamily,
+      isActiveFilterFamilyType,
     } = this.props;
     return (
       <Fragment>
@@ -180,7 +181,7 @@ class FamilyMasterPanel extends FormPanel {
                 nullLabel={formatMessage(intl, "insuree", "Family.FamilyType.null")}
                 value={!!edited && !!edited.familyType ? edited.familyType.code : null}
                 onChange={(v) => this.updateAttribute("familyType", { code: v })}
-                isSubFamily={!!edited && edited.parentId != null ? true : false}
+                isActiveFilterFamilyType={!!isActiveFilterFamilyType && isActiveFilterFamilyType == true ? true : false}
               />
             </Grid>
           )}

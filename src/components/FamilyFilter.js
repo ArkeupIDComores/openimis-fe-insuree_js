@@ -403,6 +403,7 @@ class FamilyFilter extends Component {
               <PublishedComponent
                 pubRef="insuree.FamilyTypePicker"
                 value={this._filterValue("familyType")}
+                isActiveFilterFamilyType={false}
                 onChange={(v) =>
                   onChangeFilters([
                     {
