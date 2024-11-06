@@ -43,10 +43,10 @@ class FamilyTypePicker extends Component {
       required = false,
       withNull = false,
       nullLabel = null,
-      isActiveFilterFamilyType,
+      isSubFamily = false,
     } = this.props;
     let options = !!familyTypes 
-    ? (isActiveFilterFamilyType == false 
+    ? (isSubFamily == false 
         ? familyTypes.map((v) => ({ value: v, label: this.formatSuggestion(v) })) 
         : familyTypes
             .filter((v) => v !== FAMILY_TYPE_POLYGAMY_CODE)

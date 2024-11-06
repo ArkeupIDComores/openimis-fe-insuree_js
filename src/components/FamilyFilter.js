@@ -395,6 +395,27 @@ class FamilyFilter extends Component {
             </Grid>
           }
         />
+        <ControlledField
+          module="insuree"
+          id="FamilyFilter.familyType"
+          field={
+            <Grid item xs={3} className={classes.item}>
+              <PublishedComponent
+                pubRef="insuree.FamilyTypePicker"
+                value={this._filterValue("familyType")}
+                onChange={(v) =>
+                  onChangeFilters([
+                    {
+                      id: "familyType",
+                      value: v,
+                      filter: v === null ? null : `familyType: "${v}"`,
+                    },
+                  ])
+                }
+              />
+            </Grid>
+          }
+        />
         {!!filterPaneContributionsKey && (
           <Contributions
             filters={filters}
