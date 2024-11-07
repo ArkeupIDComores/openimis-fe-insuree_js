@@ -13,7 +13,7 @@ import {
   ControlledField,
   TextInput,
 } from "@openimis/fe-core";
-import { DEFAULT } from "../constants";
+import { DEFAULT, FAMILY_TYPE_POLYGAMY_CODE } from "../constants";
 
 const styles = (theme) => ({
   dialogTitle: theme.dialog.title,
@@ -411,12 +411,38 @@ class FamilyFilter extends Component {
                       value: v,
                       filter: v === null ? null : `familyType: "${v}"`,
                     },
+                    {
+                      id: "isSubFamily",
+                      value: null,
+                      filter: null
+                    }
                   ])
                 }
               />
             </Grid>
           }
         />
+        {!!this._filterValue("familyType") && this._filterValue("familyType") != FAMILY_TYPE_POLYGAMY_CODE && (
+          <ControlledField
+          module="insuree"
+          id="FamilyFilter.isSubFamily"
+          field={
+            <Grid item xs={2} className={classes.item}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    color="primary"
+                    checked={!!this._filterValue("isSubFamily")}
+                    onChange={(event) => this._onChangeCheckbox("isSubFamily", event.target.checked)}
+                  />
+                }
+                label={formatMessage(intl, "insuree", "FamilyFilter.isSubFamily")}
+              />
+            </Grid>
+          }
+        />
+        )
+        }
         {!!filterPaneContributionsKey && (
           <Contributions
             filters={filters}
