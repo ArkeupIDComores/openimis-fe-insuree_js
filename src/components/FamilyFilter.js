@@ -412,7 +412,7 @@ class FamilyFilter extends Component {
                       filter: v === null ? null : `familyType: "${v}"`,
                     },
                     {
-                      id: "isSubFamily",
+                      id: "isSubfamily",
                       value: null,
                       filter: null
                     }
@@ -425,18 +425,18 @@ class FamilyFilter extends Component {
         {!!this._filterValue("familyType") && this._filterValue("familyType") != FAMILY_TYPE_POLYGAMY_CODE && (
           <ControlledField
           module="insuree"
-          id="FamilyFilter.isSubFamily"
+          id="FamilyFilter.isSubfamily"
           field={
             <Grid item xs={2} className={classes.item}>
               <FormControlLabel
                 control={
                   <Checkbox
                     color="primary"
-                    checked={!!this._filterValue("isSubFamily")}
-                    onChange={(event) => this._onChangeCheckbox("isSubFamily", event.target.checked)}
+                    checked={!!this._filterValue("isSubfamily")}
+                    onChange={(event) => this._onChangeCheckbox("isSubfamily", event.target.checked)}
                   />
                 }
-                label={formatMessage(intl, "insuree", "FamilyFilter.isSubFamily")}
+                label={formatMessage(intl, "insuree", "FamilyFilter.isSubfamily")}
               />
             </Grid>
           }
