@@ -180,8 +180,8 @@ class FamilyInsureesOverview extends PagedDataHandler {
     "Insuree.gender",
     "Insuree.dob",
     "Insuree.cardIssued",
-    "",
-    "",
+    "Insuree.phone",
+    "Insuree.photo",
     "",
   ];
 
@@ -201,6 +201,8 @@ class FamilyInsureesOverview extends PagedDataHandler {
     this.sorter("gender"),
     this.sorter("dob"),
     this.sorter("cardIssued"),
+    this.sorter("phone"),
+    this.sorter("photo"),
   ];
 
   adornedChfId = (i) => (
@@ -307,6 +309,8 @@ class FamilyInsureesOverview extends PagedDataHandler {
       i.gender && i.gender.code ? formatMessage(this.props.intl, "insuree", `InsureeGender.${i.gender.code}`) : "",
     (i) => formatDateFromISO(this.props.modulesManager, this.props.intl, i.dob),
     (i) => <Checkbox color="primary" readOnly={true} disabled={true} checked={i.cardIssued} />,
+    (i) => i.phone || "", 
+    (i) => i.photo ? <img src={`data:image/jpeg;base64,${i.photo.photo}`} alt="" style={{ width: 80, height: 80,  borderRadius: "80%" }} /> : "",
     (i) =>
       !!this.props.readOnly ||
         !this.props.rights.includes(RIGHT_INSUREE_DELETE) ||

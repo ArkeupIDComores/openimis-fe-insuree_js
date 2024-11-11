@@ -17,6 +17,8 @@ import {
 } from "@openimis/fe-core";
 import { fetchInsuree } from "../actions";
 import InsureeSummary from "./InsureeSummary";
+import FamilyInsureesOverview from "./FamilyInsureesOverview";
+import SubFamiliesSummary from "./SubFamiliesSummary";
 
 const useStyles = makeStyles(() => ({
   summary: {
@@ -69,6 +71,8 @@ const EnquiryDialog = ({
         {!fetching && insuree && (
           <Fragment>
             <InsureeSummary modulesManager={modulesManager} insuree={insuree} className={classes.summary} />
+            <FamilyInsureesOverview insureeId={insuree.id} /> 
+            <SubFamiliesSummary insureeId={insuree.id} /> 
             <Contributions
               contributionKey="insuree.EnquiryDialog"
               insuree={insuree}
