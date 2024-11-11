@@ -181,7 +181,7 @@ class FamilyInsureesOverview extends PagedDataHandler {
     "Insuree.dob",
     "Insuree.cardIssued",
     "Insuree.phone",
-    "Insuree.photo",
+    null,
     "",
   ];
 
