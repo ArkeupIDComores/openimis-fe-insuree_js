@@ -409,7 +409,7 @@ class FamilyFilter extends Component {
                     {
                       id: "familyType",
                       value: v,
-                      filter: v === null ? null : `familyType: "${v}"`,
+                      filter: v === null || v == "" ? null : `familyType: "${v}"`,
                     },
                     {
                       id: "isSubfamily",
