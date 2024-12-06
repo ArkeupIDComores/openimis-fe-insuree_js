@@ -147,7 +147,7 @@
   "insuree.Relation.7": "Other",
   "insuree.Relation.8": "Spouse",
   "insuree.Relation.9": "Mother",
-
+  "insuree.familySummaries.printMembershipForm": "Print insuree membership Form",
   "insuree.IdentificationTypePicker.label": "Id Type",
   "insuree.IdentificationType.null": "Any",
   "insuree.IdentificationType.none": "Not specified",
