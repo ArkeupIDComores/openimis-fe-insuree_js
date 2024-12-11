@@ -67,13 +67,15 @@ const FamilyMembersTable = ({ history, insuree }) => {
 
   const onDoubleClick = (member, newTab = false) => {
     if (member?.uuid && insuree?.family?.uuid) {
-      historyPush(
-        modulesManager,
-        history,
-        "insuree.route.insuree",
-        [member.uuid, insuree.family.uuid],
-        newTab
-      );
+      const route = "insuree.route.insuree";
+      const params = [member.uuid, insuree.family.uuid];
+      
+      if (newTab) {
+        historyPush(modulesManager, history, route, params, newTab);
+      } else {
+        history.push(`/insuree/insurees/insuree/${member.uuid}/${insuree.family.uuid}`);
+        window.location.reload();
+      }
     }
   };
 
@@ -82,6 +84,13 @@ const FamilyMembersTable = ({ history, insuree }) => {
       <TableContainer className={classes.tableContainer}>
         <Table size="small">
           <TableHead>
+            <TableRow>
+              <TableCell colSpan={FAMILY_MEMBERS_HEADERS.length} style={{ borderBottom: 'none' }}>
+                <Typography variant="h6">
+                  {formatMessage("insuree.FamilyMembersTable.title")} ({familyMembers?.length || 0})
+                </Typography>
+              </TableCell>
+            </TableRow>
             <TableRow className={classes.tableHeader}>
               {FAMILY_MEMBERS_HEADERS.map((header) => (
                 <TableCell key={header} className={classes.headerCell}>

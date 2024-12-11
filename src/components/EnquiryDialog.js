@@ -109,52 +109,59 @@ const EnquiryDialog = ({
           <Fragment>
             <InsureeSummary modulesManager={modulesManager} insuree={insuree} className={classes.summary} />
             {subfamilies?.filter(subfamily => subfamily.parent?.id === insuree?.family?.id).length > 0 ? (
-              <Paper className={classes.tableContainer}>
-                <Table>
-                  <TableHead>
-                    <TableRow className={classes.tableHeader}>
-                      <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.insuranceNo")}</TableCell>
-                      <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.lastName")}</TableCell>
-                      <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.otherNames")}</TableCell>
-                      <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.email")}</TableCell>
-                      <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.phone")}</TableCell>
-                      <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.dob")}</TableCell>
-                      <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.photo")}</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {subfamilies
-                      .filter(subfamily => subfamily.parent?.id === insuree?.family?.id)
-                      .map((subfamily) => (
-                      <TableRow 
-                        key={subfamily.uuid}
-                        className={classes.tableRow}
-                        onDoubleClick={() => onDoubleClick(subfamily)}
-                      >
-                        <TableCell>{subfamily.headInsuree?.chfId || ''}</TableCell>
-                        <TableCell>{subfamily.headInsuree?.lastName || ''}</TableCell>
-                        <TableCell>{subfamily.headInsuree?.otherNames || ''}</TableCell>
-                        <TableCell>{subfamily.headInsuree?.email || ''}</TableCell>
-                        <TableCell>{subfamily.headInsuree?.phone || ''}</TableCell>
-                        <TableCell>{subfamily.headInsuree?.dob || ''}</TableCell>
-                        <TableCell>
-                          {subfamily.headInsuree?.photo ? (
-                            <img
-                              src={`data:image/jpeg;base64,${subfamily.headInsuree.photo.photo}`}
-                              alt=""
-                              style={{ width: '80px', height: '80px', objectFit: 'fill', borderRadius: '80%' }}
-                            />
-                          ) : (
-                            <Typography>No Photo</Typography>
-                          )}
-                        </TableCell>
+              <>
+                <Typography variant="h6" style={{ marginBottom: '16px' }}>
+                  {formatMessage(intl, "insuree", "SubFamilies.title")} ({subfamilies.filter(subfamily => subfamily.parent?.id === insuree?.family?.id).length})
+                </Typography>
+                <Paper className={classes.tableContainer}>
+                  <Table>
+                    <TableHead>
+                      <TableRow className={classes.tableHeader}>
+                        <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.insuranceNo")}</TableCell>
+                        <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.lastName")}</TableCell>
+                        <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.otherNames")}</TableCell>
+                        <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.email")}</TableCell>
+                        <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.phone")}</TableCell>
+                        <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.dob")}</TableCell>
+                        <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.photo")}</TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </Paper>
+                    </TableHead>
+                    <TableBody>
+                      {subfamilies
+                        .filter(subfamily => subfamily.parent?.id === insuree?.family?.id)
+                        .map((subfamily) => (
+                        <TableRow 
+                          key={subfamily.uuid}
+                          className={classes.tableRow}
+                          onDoubleClick={() => onDoubleClick(subfamily)}
+                        >
+                          <TableCell>{subfamily.headInsuree?.chfId || ''}</TableCell>
+                          <TableCell>{subfamily.headInsuree?.lastName || ''}</TableCell>
+                          <TableCell>{subfamily.headInsuree?.otherNames || ''}</TableCell>
+                          <TableCell>{subfamily.headInsuree?.email || ''}</TableCell>
+                          <TableCell>{subfamily.headInsuree?.phone || ''}</TableCell>
+                          <TableCell>{subfamily.headInsuree?.dob || ''}</TableCell>
+                          <TableCell>
+                            {subfamily.headInsuree?.photo ? (
+                              <img
+                                src={`data:image/jpeg;base64,${subfamily.headInsuree.photo.photo}`}
+                                alt=""
+                                style={{ width: '80px', height: '80px', objectFit: 'fill', borderRadius: '80%' }}
+                              />
+                            ) : (
+                              <Typography>No Photo</Typography>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </Paper>
+              </>
             ) : (
-              <FamilyMembersTable history={history} insuree={insuree} />
+              <>
+                <FamilyMembersTable history={history} insuree={insuree} />
+              </>
             )}
             <Contributions
               contributionKey="insuree.EnquiryDialog"
