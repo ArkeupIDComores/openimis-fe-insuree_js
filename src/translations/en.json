@@ -276,6 +276,18 @@
   "insuree.FamilyMembersTable.InsuranceNo": "Insurance No.",
   "insuree.FamilyMembersTable.memberName": "Family Member",
   "insuree.FamilyMembersTable.phone": "Phone",
+  "insuree.FamilyMembersTable.gender": "Gender",
+  "insuree.FamilyMembersTable.birthDate": "Birth Date",
+  "insuree.FamilyMembersTable.beneficiaryCard": "Beneficiary Card",
+  "insuree.FamilyMembersTable.photo": "Photo",
+  "insuree.FamilyMembersTable.photoDate": "Photo Date",
+  "insuree.FamilyMembersTable.photoOfficer": "Officer (Photo)",
+  "insuree.FamilyMembersTable.photoFilename": "File Name",
+  "insuree.FamilyMembersTable.email": "Email",
+  "insuree.FamilyMembersTable.passport": "Identification No.",
+  "insuree.FamilyMembersTable.currentVillage.sameAsFamily": "Same Village as Family",
+  "insuree.FamilyMembersTable.currentAddress": "Address",
+  "insuree.FamilyMembersTable.currentAddress.sameAsFamily": "Same Address as Family",   
   "insuree.FamilyMembersTable.noMembers": "Family not registered.",
   "insuree.familySummaries.selectParent": "Select Parent Family"
 }
