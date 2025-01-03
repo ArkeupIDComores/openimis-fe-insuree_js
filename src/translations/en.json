@@ -291,6 +291,6 @@
   "insuree.FamilyMembersTable.noMembers": "Family not registered.",
   "insuree.FamilyMembersTable.title":"Number of insured",
   "insuree.familySummaries.selectParent": "Select Parent Family",
-  "insuree.SubFamilies.title": "Number of subfamilies"
+  "insuree.SubFamilies.title": "Number of subfamilies",
   "insuree.FamilyFilter.isSubfamily": "Sub-Families"
 }

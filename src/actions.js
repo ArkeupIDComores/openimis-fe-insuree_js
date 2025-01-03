@@ -60,7 +60,7 @@ const FAMILY_FULL_PROJECTION = (mm) => [
   `headInsuree{${FAMILY_HEAD_PROJECTION(mm).join(",")}}`,
   "location" + mm.getProjection("location.Location.FlatProjection"),
   "clientMutationId",
-  "parent{id}",
+  "parent{id, uuid, familyType{code}, headInsuree{id, uuid, chfId, lastName, otherNames}}",
 ];
 
 export const FAMILY_PICKER_PROJECTION = ["id", "uuid", "headInsuree{id chfId uuid lastName otherNames}"];

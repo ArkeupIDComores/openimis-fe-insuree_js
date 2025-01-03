@@ -56,7 +56,7 @@ const FamilyMembersTable = ({ history, insuree }) => {
   const classes = useStyles();
   const { formatMessage } = useTranslations("insuree", FAMILY_MEMBERS_HEADERS);
 
-  const familyMembers = useSelector((state) => state.insuree.familyMembers?.filter(member => !member.head));
+  const familyMembers = useSelector((state) => state.insuree.familyMembers);
   const renderLastNameFirst = modulesManager.getConf("fe-insuree", "renderLastNameFirst", true);
 
   useEffect(() => {
