@@ -3,7 +3,19 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { injectIntl } from "react-intl";
 
-import { Dialog, Button, DialogActions, DialogContent, Table, TableHead, TableBody, TableRow, TableCell, Paper, Typography } from "@material-ui/core";
+import { 
+  Dialog, 
+  Button, 
+  DialogActions, 
+  DialogContent, 
+  Table, 
+  TableHead, 
+  TableBody, 
+  TableRow, 
+  TableCell, 
+  Paper, 
+  Typography 
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 
 import {
@@ -16,7 +28,13 @@ import {
   withHistory,
   historyPush,
 } from "@openimis/fe-core";
-import { fetchInsuree, fetchSubFamilySummary, clearSubFamily, clearInsuree, fetchFamily } from "../actions";
+import { 
+  fetchInsuree, 
+  fetchSubFamilySummary, 
+  clearSubFamily, 
+  clearInsuree, 
+  fetchFamily 
+} from "../actions";
 import InsureeSummary from "./InsureeSummary";
 import FamilyMembersTable from "./FamilyMembersTable";
 
@@ -54,7 +72,6 @@ const EnquiryDialog = ({
   fetched,
   insuree,
   subfamilies,
-  fetchingSubFamilies,
   error,
   onClose,
   open,
@@ -75,7 +92,6 @@ const EnquiryDialog = ({
   const refreshCurrentFamily = () => {
     const familyUuid = getFamilyUuidFromPath(currentPath);
     if (familyUuid) {
-      console.log("[EnquiryDialog] Refreshing current family data:", familyUuid);
       fetchFamily(modulesManager, familyUuid);
     }
   };
@@ -87,9 +103,104 @@ const EnquiryDialog = ({
     refreshCurrentFamily();
   };
 
+  const findPolygamousFamily = (family) => {
+    if (family?.familyType?.code === 'P') return family;
+    if (family?.parent?.familyType?.code === 'P') return family.parent;
+    return null;
+  };
+
+  const isPolygamousHead = () => {
+    const isHead = 
+      insuree?.head || 
+      insuree?.family?.headInsuree?.id === insuree?.id ||
+      insuree?.id === insuree?.family?.parent?.headInsuree?.id;
+    
+    const polygamousFamily = findPolygamousFamily(insuree?.family);
+    return isHead && !!polygamousFamily;
+  };
+
+  const isPolygamousHeadWithSubFamilies = () => {
+    return insuree?.id === insuree?.family?.parent?.headInsuree?.id &&
+           insuree?.family?.parent?.familyType?.code === 'P' &&
+           insuree?.id !== insuree?.family?.headInsuree?.id;
+  };
+
+  const getSubFamiliesList = () => {
+    if (!subfamilies || !isPolygamousHead()) return [];
+    const polygamousFamily = findPolygamousFamily(insuree?.family);
+    return subfamilies.filter(subfamily => 
+      subfamily.parent?.id === polygamousFamily?.id
+    );
+  };
+
+  const onDoubleClick = (subfamily, newTab = false) => {
+    const currentPathMatch = history?.location?.pathname.match(
+      /\/subfamilies\/subFamilyOverview\/([^/]+)\/([^/]+)\/([^/]+)/
+    );
+    
+    const navigationDetails = {
+      subfamily: {
+        uuid: subfamily?.uuid,
+        headInsureeUuid: subfamily?.headInsuree?.uuid,
+        familyType: subfamily?.familyType?.code
+      },
+      currentFamily: {
+        uuid: insuree?.family?.uuid,
+        familyType: insuree?.family?.familyType?.code,
+        parentUuid: insuree?.family?.parent?.uuid
+      },
+      currentPath: {
+        full: history?.location?.pathname,
+        parsed: currentPathMatch ? {
+          subfamilyUuid: currentPathMatch[1],
+          parentFamilyUuid: currentPathMatch[2],
+          headInsureeUuid: currentPathMatch[3]
+        } : null
+      }
+    };
+
+    if (!subfamily?.uuid || !subfamily?.headInsuree?.uuid) {
+      return;
+    }
+
+    let parentFamilyUuid = insuree?.family?.parent?.uuid;
+    
+    if (!parentFamilyUuid && insuree?.family?.uuid) {
+      parentFamilyUuid = insuree.family.uuid;
+    }
+    
+    if (!parentFamilyUuid && navigationDetails.currentPath.parsed?.parentFamilyUuid) {
+      parentFamilyUuid = navigationDetails.currentPath.parsed.parentFamilyUuid;
+    }
+
+    if (!parentFamilyUuid) {
+      return;
+    }
+
+    const finalNavigationParams = {
+      subfamilyUuid: subfamily.uuid,
+      parentFamilyUuid,
+      headInsureeUuid: subfamily.headInsuree.uuid
+    };
+
+    handleClose();
+  
+    try {
+      historyPush(
+        modulesManager, 
+        history, 
+        "insuree.route.subFamilyOverview",
+        [finalNavigationParams.subfamilyUuid, finalNavigationParams.parentFamilyUuid, finalNavigationParams.headInsureeUuid],
+        newTab
+      );
+      window.location.reload();
+    } catch (error) {
+      console.error("[EnquiryDialog] Navigation Error:", error);
+    }
+  };
+
   useEffect(() => {
     if (open && insuree?.id !== chfid) {
-      console.log("[EnquiryDialog] Fetching insuree with chfid:", chfid);
       fetchInsuree(modulesManager, chfid);
     }
 
@@ -103,218 +214,14 @@ const EnquiryDialog = ({
   }, [open, chfid, match?.url]);
 
   useEffect(() => {
-    console.log("[EnquiryDialog] Current insuree:", {
-      id: insuree?.id,
-      chfId: insuree?.chfId,
-      familyId: insuree?.family?.id,
-      familyUuid: insuree?.family?.uuid,
-      familyType: insuree?.family?.familyType?.code,
-      isHead: insuree?.head,
-      headId: insuree?.family?.headInsuree?.id,
-      parentFamilyId: insuree?.family?.parent?.id,
-      parentFamilyUuid: insuree?.family?.parent?.uuid,
-      parentFamilyType: insuree?.family?.parent?.familyType?.code,
-      parentHeadId: insuree?.family?.parent?.headInsuree?.id
-    });
-
-    // Débogage détaillé pour le type de famille parente
-    if (insuree?.family?.parent) {
-      console.warn("[EnquiryDialog] Parent Family Details:", {
-        parentFamily: insuree.family.parent,
-        parentFamilyTypeRaw: insuree.family.parent.familyType,
-        parentFamilyTypeCode: insuree.family.parent.familyType?.code,
-        parentFamilyTypeExists: !!insuree.family.parent.familyType,
-        parentFamilyTypeKeys: Object.keys(insuree.family.parent.familyType || {})
-      });
-    }
-
     if (insuree?.family?.uuid) {
-      // Si l'assuré est dans une sous-famille
       if (insuree.family?.parent?.uuid) {
-        console.log("[EnquiryDialog] Insuree is in a subfamily");
-        // Chercher les sous-familles de la famille parente
         fetchSubFamilySummary(modulesManager, { parent_Uuid: insuree.family.parent.uuid });
       } else {
-        // Chercher les sous-familles de la famille actuelle
-        console.log("[EnquiryDialog] Insuree is in main family");
         fetchSubFamilySummary(modulesManager, { parent_Uuid: insuree.family.uuid });
       }
     }
   }, [insuree?.family?.uuid]);
-
-  const isPolygamousHead = () => {
-    // Vérification plus robuste pour déterminer si l'assuré est chef de famille
-    const isHead = 
-      insuree?.head || 
-      insuree?.family?.headInsuree?.id === insuree?.id ||
-      // Vérifier si l'ID de l'assuré correspond à l'ID du chef de la famille parente
-      insuree?.id === insuree?.family?.parent?.headInsuree?.id;
-    
-    // Recherche de la famille polygame originale
-    const findPolygamousFamily = (family) => {
-      // Si la famille actuelle est polygame, la retourner
-      if (family?.familyType?.code === 'P') return family;
-      
-      // Sinon, chercher dans la famille parente
-      if (family?.parent?.familyType?.code === 'P') return family.parent;
-      
-      return null;
-    };
-
-    const polygamousFamily = findPolygamousFamily(insuree?.family);
-    
-    console.warn("[EnquiryDialog] Polygamous Head Comprehensive Check:", {
-      isHead,
-      currentFamily: {
-        uuid: insuree?.family?.uuid,
-        type: insuree?.family?.familyType?.code,
-        headId: insuree?.family?.headInsuree?.id
-      },
-      parentFamily: {
-        uuid: insuree?.family?.parent?.uuid,
-        type: insuree?.family?.parent?.familyType?.code,
-        headId: insuree?.family?.parent?.headInsuree?.id
-      },
-      foundPolygamousFamily: {
-        uuid: polygamousFamily?.uuid,
-        type: polygamousFamily?.familyType?.code
-      },
-      insureeDetails: {
-        id: insuree?.id,
-        head: insuree?.head
-      }
-    });
-
-    // Un chef polygame reste un chef polygame, même s'il est dans une sous-famille "H"
-    return isHead && !!polygamousFamily;
-  };
-
-  const getSubFamiliesList = () => {
-    if (!subfamilies || !isPolygamousHead()) return [];
-    
-    // Recherche de la famille polygame originale
-    const findPolygamousFamily = (family) => {
-      if (family?.familyType?.code === 'P') return family;
-      if (family?.parent?.familyType?.code === 'P') return family.parent;
-      return null;
-    };
-
-    const polygamousFamily = findPolygamousFamily(insuree?.family);
-    
-    console.warn("[EnquiryDialog] Subfamily Selection:", {
-      polygamousFamilyUuid: polygamousFamily?.uuid,
-      polygamousFamilyType: polygamousFamily?.familyType?.code,
-      currentFamilyUuid: insuree?.family?.uuid,
-      currentFamilyType: insuree?.family?.familyType?.code
-    });
-
-    // Filtrer les sous-familles de la famille polygame originale
-    return subfamilies.filter(subfamily => 
-      subfamily.parent?.id === polygamousFamily?.id
-    );
-  };
-
-  const isPolygamousHeadWithSubFamilies = () => {
-    // Condition spécifique : 
-    // 1. Si l'ID de l'assuré est le même que le parentHeadId
-    // 2. ET si le headId est différent de l'ID de l'assuré
-    const isPolygamousHeadWithSubFamily = 
-      insuree?.id === insuree?.family?.parent?.headInsuree?.id &&
-      insuree?.id !== insuree?.family?.headInsuree?.id;
-
-    console.warn("[EnquiryDialog] Polygamous Head with Subfamilies Check:", {
-      insureeId: insuree?.id,
-      familyHeadId: insuree?.family?.headInsuree?.id,
-      parentHeadId: insuree?.family?.parent?.headInsuree?.id,
-      parentFamilyType: insuree?.family?.parent?.familyType?.code,
-      isPolygamousHeadWithSubFamily
-    });
-
-    return isPolygamousHeadWithSubFamily;
-  };
-
-  const onDoubleClick = (subfamily, newTab = false) => {
-    console.log("[EnquiryDialog] Opening subfamily:", {
-      subfamilyUuid: subfamily.uuid,
-      familyUuid: insuree.family.uuid,
-      headInsureeUuid: subfamily.headInsuree.uuid
-    });
-    
-    handleClose();
-    historyPush(
-      modulesManager,
-      history,
-      "insuree.route.subFamilyOverview",
-      [subfamily.uuid, insuree.family.uuid, subfamily.headInsuree.uuid],
-      newTab
-    );
-  };
-  
-  const getDisplayContent = () => {
-    // Si c'est un chef de famille polygame avec sous-familles, afficher les sous-familles
-    if (isPolygamousHeadWithSubFamilies()) {
-      const subFamiliesList = getSubFamiliesList();
-      
-      console.warn("[EnquiryDialog] Displaying Subfamilies:", {
-        subFamiliesCount: subFamiliesList.length,
-        subFamilies: subFamiliesList
-      });
-
-      return (
-        <>
-          <Typography variant="h6" style={{ marginBottom: '16px' }}>
-            {formatMessage(intl, "insuree", "SubFamilies.title")} ({subFamiliesList.length})
-          </Typography>
-          <Paper className={classes.tableContainer}>
-            <Table>
-              <TableHead>
-                <TableRow className={classes.tableHeader}>
-                  <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.insuranceNo")}</TableCell>
-                  <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.lastName")}</TableCell>
-                  <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.otherNames")}</TableCell>
-                  <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.email")}</TableCell>
-                  <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.phone")}</TableCell>
-                  <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.dob")}</TableCell>
-                  <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.photo")}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {subFamiliesList.map((subfamily) => (
-                  <TableRow 
-                    key={subfamily.uuid}
-                    className={classes.tableRow}
-                    onDoubleClick={() => onDoubleClick(subfamily)}
-                  >
-                    <TableCell>{subfamily.headInsuree?.chfId || ''}</TableCell>
-                    <TableCell>{subfamily.headInsuree?.lastName || ''}</TableCell>
-                    <TableCell>{subfamily.headInsuree?.otherNames || ''}</TableCell>
-                    <TableCell>{subfamily.headInsuree?.email || ''}</TableCell>
-                    <TableCell>{subfamily.headInsuree?.phone || ''}</TableCell>
-                    <TableCell>{subfamily.headInsuree?.dob || ''}</TableCell>
-                    <TableCell>
-                      {subfamily.headInsuree?.photo ? (
-                        <img
-                          src={`data:image/jpeg;base64,${subfamily.headInsuree.photo.photo}`}
-                          alt=""
-                          style={{ width: '80px', height: '80px', objectFit: 'fill', borderRadius: '80%' }}
-                        />
-                      ) : (
-                        <Typography>No Photo</Typography>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Paper>
-        </>
-      );
-    }
-
-    // Sinon, afficher les membres de la famille
-    return <FamilyMembersTable insuree={insuree} history={history} />;
-  };
-
 
   return (
     <Dialog maxWidth="xl" fullWidth open={open} onClose={handleClose}>
@@ -331,7 +238,58 @@ const EnquiryDialog = ({
         {!fetching && insuree && (
           <Fragment>
             <InsureeSummary modulesManager={modulesManager} insuree={insuree} className={classes.summary} />
-            {getDisplayContent()}
+            {isPolygamousHeadWithSubFamilies() && (
+              <>
+                <Typography variant="h6" style={{ marginBottom: '16px' }}>
+                  {formatMessage(intl, "insuree", "SubFamilies.title")} ({getSubFamiliesList().length})
+                </Typography>
+                <Paper className={classes.tableContainer}>
+                  <Table>
+                    <TableHead>
+                      <TableRow className={classes.tableHeader}>
+                        <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.insuranceNo")}</TableCell>
+                        <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.lastName")}</TableCell>
+                        <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.otherNames")}</TableCell>
+                        <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.email")}</TableCell>
+                        <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.phone")}</TableCell>
+                        <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.dob")}</TableCell>
+                        <TableCell className={classes.tableCell}>{formatMessage(intl, "insuree", "familySummaries.photo")}</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {getSubFamiliesList().map((subfamily) => (
+                        <TableRow 
+                          key={subfamily.uuid}
+                          className={classes.tableRow}
+                          onDoubleClick={() => onDoubleClick(subfamily)}
+                        >
+                          <TableCell>{subfamily.headInsuree?.chfId || ''}</TableCell>
+                          <TableCell>{subfamily.headInsuree?.lastName || ''}</TableCell>
+                          <TableCell>{subfamily.headInsuree?.otherNames || ''}</TableCell>
+                          <TableCell>{subfamily.headInsuree?.email || ''}</TableCell>
+                          <TableCell>{subfamily.headInsuree?.phone || ''}</TableCell>
+                          <TableCell>{subfamily.headInsuree?.dob || ''}</TableCell>
+                          <TableCell>
+                            {subfamily.headInsuree?.photo ? (
+                              <img
+                                src={`data:image/jpeg;base64,${subfamily.headInsuree.photo.photo}`}
+                                alt=""
+                                style={{ width: '80px', height: '80px', objectFit: 'fill', borderRadius: '80%' }}
+                              />
+                            ) : (
+                              <Typography>No Photo</Typography>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </Paper>
+              </>
+            )}
+            {!isPolygamousHeadWithSubFamilies() && (
+              <FamilyMembersTable insuree={insuree} history={history} />
+            )}
             <Contributions
               contributionKey="insuree.EnquiryDialog"
               insuree={insuree}
@@ -352,13 +310,25 @@ const EnquiryDialog = ({
 
 const mapStateToProps = (state) => ({
   fetching: state.insuree.fetchingInsuree,
-  fetchingSubFamilies: state.insuree.fetchingSubFamilies,
   fetched: state.insuree.fetchedInsuree,
   insuree: state.insuree.insuree,
   subfamilies: state.insuree.subFamilies,
   error: state.insuree.errorInsuree,
 });
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({ fetchInsuree, fetchSubFamilySummary, fetchFamily, clearSubFamily, clearInsuree }, dispatch);
+const mapDispatchToProps = (dispatch) => 
+  bindActionCreators({ 
+    fetchInsuree, 
+    fetchSubFamilySummary, 
+    fetchFamily, 
+    clearSubFamily, 
+    clearInsuree 
+  }, dispatch);
 
-export default withModulesManager(withHistory(connect(mapStateToProps, mapDispatchToProps)(injectIntl(EnquiryDialog))));
+export default withModulesManager(
+  withHistory(
+    connect(mapStateToProps, mapDispatchToProps)(
+      injectIntl(EnquiryDialog)
+    )
+  )
+);
