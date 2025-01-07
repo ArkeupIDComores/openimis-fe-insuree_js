@@ -176,6 +176,7 @@ class SubFamiliesSummary extends PagedDataHandler {
   };
 
   headers = [
+    null,
     "insuree.familySummaries.insuranceNo",
     "insuree.familySummaries.lastName",
     "insuree.familySummaries.otherNames",
@@ -195,6 +196,7 @@ class SubFamiliesSummary extends PagedDataHandler {
   ];
 
   headerActions = [
+    this.sorter("photo"),
     this.sorter("chfId"),
     this.sorter("lastName"),
     this.sorter("otherNames"),
@@ -360,6 +362,16 @@ class SubFamiliesSummary extends PagedDataHandler {
     } = this.props;
     const { shouldBeLocked } = this.state;
     var formatters = [
+      (family) =>
+        family.headInsuree?.photo ? (
+          <img
+            src={`data:image/jpeg;base64,${family.headInsuree.photo.photo}`} // Adjust based on the correct field structure
+            alt=""
+            style={{ width: '80px', height: '80px', objectFit: 'fill', borderRadius: '80%' }}
+          />
+        ) : (
+          <Typography>No Photo</Typography>
+        ),
       (family) => (!!family.headInsuree ? family.headInsuree.chfId : ""),
       (family) => (!!family.headInsuree ? family.headInsuree.lastName : ""),
       (family) => (!!family.headInsuree ? family.headInsuree.otherNames : ""),
@@ -408,12 +420,14 @@ class SubFamiliesSummary extends PagedDataHandler {
       ),
     );
     var headers = [
+      null,
       "insuree.familySummaries.insuranceNo",
       "insuree.familySummaries.lastName",
       "insuree.familySummaries.otherNames",
       "insuree.familySummaries.email",
       "insuree.familySummaries.phone",
       "insuree.familySummaries.dob",
+     
     ];
     for (var i = 0; i < this.locationLevels; i++) {
       headers.push(`location.locationType.${i}`);

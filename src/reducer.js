@@ -67,7 +67,7 @@ function reducer(
     subFamilies: null,
     errorSubFamilies: null,
     subFamiliesPageInfo: null,
-    subFamiliesTotalCount : 0,
+    subFamiliesTotalCount: 0,
     fetchingWorkersExport: false,
     fetchedWorkersExport: false,
     workersExport: null,
@@ -175,7 +175,7 @@ function reducer(
         subFamilies: null,
         errorSubFamilies: null,
         subFamiliesPageInfo: null,
-        subFamiliesTotalCount : 0,
+        subFamiliesTotalCount: 0
       };
     case "INSUREE_SUB_FAMILY_RESP":
       return {
@@ -185,25 +185,25 @@ function reducer(
         subFamilies: parseData(action.payload.data.families),
         errorSubFamilies: formatGraphQLError(action.payload),
         subFamiliesPageInfo: pageInfo(action.payload.data.families),
-        subFamiliesTotalCount : action.payload.data.families.totalCount
+        subFamiliesTotalCount: action.payload.data.families.totalCount
       };
     case "INSUREE_SUB_FAMILY_ERR":
       return {
         ...state,
         fetchingSubFamilies: false,
         errorSubFamilies: formatGraphQLError(action.payload),
-        subFamiliesTotalCount : 0,
-      }
+        subFamiliesTotalCount: 0
+      };
     case "INSUREE_SUB_FAMILY_CLEAR":
-      return{
+      return {
         ...state,
         fetchingSubFamilies: false,
         fetchedSubFamilies: false,
         subFamilies: null,
         errorSubFamilies: null,
         subFamiliesPageInfo: null,
-        subFamiliesTotalCount : 0
-      }
+        subFamiliesTotalCount: 0
+      };
     case "INSUREE_FAMILY_CAN_ADD_INSUREE_REQ":
       return {
         ...state,

@@ -139,6 +139,22 @@ class FamiliesPage extends Component {
     })
   }
 
+  printMembershipForm = (selection) =>{
+    let familyID="familyID="
+    for(let i=0; i<selection.length; i++ ){
+      familyID=`${familyID}${decodeId(selection[i].id)},`
+    }
+    let printUrl = `http://localhost/api/report/membership_report/pdf/?${familyID}`
+    window.open(printUrl, "_blank")
+    return;
+  }
+  canPrintMemberShipForm = (selection) =>{
+    if (!!selection && selection.length>0) {
+      return true
+    }
+      return false
+  }
+
   componentWillUnmount = () => {
     const { location, history } = this.props;
     const {
@@ -158,6 +174,12 @@ class FamiliesPage extends Component {
       enabled: this.canLinkFamilyToParent,
       icon: <LinkIcon />,
     });
+    actions.push({
+      label: "insuree.familySummaries.printMembershipForm",
+      action: this.printMembershipForm,
+      enabled: this.canPrintMemberShipForm,
+    })
+    
     return (
       <div className={classes.page}>
         <FamilySearcher
